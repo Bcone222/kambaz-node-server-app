@@ -11,6 +11,8 @@ import ModulesRoutes from "./Kambaz/modules/routes.js";
 import AssignmentsRoutes from "./Kambaz/assignments/routes.js";
 
 const app = express();
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     credentials: true,
@@ -29,7 +31,6 @@ if (process.env.SERVER_ENV !== "development") {
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
-    domain: process.env.SERVER_URL,
   };
 }
 
