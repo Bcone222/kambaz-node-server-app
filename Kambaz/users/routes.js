@@ -101,10 +101,7 @@ export default function UserRoutes(app, db) {
       res.sendStatus(401);
       return;
     }
-    enrollmentsDao.unenrollUserFromCourse(
-      currentUser._id,
-      req.params.courseId
-    );
+    enrollmentsDao.unenrollUserFromCourse(currentUser._id, req.params.courseId);
     res.sendStatus(200);
   };
 
@@ -112,7 +109,7 @@ export default function UserRoutes(app, db) {
   app.post("/api/users/current/enrollments", enrollCurrentUserInCourse);
   app.delete(
     "/api/users/current/enrollments/:courseId",
-    unenrollCurrentUserFromCourse
+    unenrollCurrentUserFromCourse,
   );
 
   app.post("/api/users", createUser);

@@ -54,24 +54,24 @@ export default function AssignmentsRoutes(app, db) {
   app.get(
     "/api/courses/:courseId/assignments",
     requireUser,
-    findAssignmentsForCourse
+    findAssignmentsForCourse,
   );
   app.post(
     "/api/courses/:courseId/assignments",
     requireUser,
     requireAssignmentEditorRole,
-    createAssignmentForCourse
+    createAssignmentForCourse,
   );
   app.delete(
     "/api/assignments/:assignmentId",
     requireUser,
     requireAssignmentEditorRole,
-    deleteAssignment
+    deleteAssignment,
   );
   app.put(
     "/api/assignments/:assignmentId",
     requireUser,
     requireAssignmentEditorRole,
-    updateAssignment
+    updateAssignment,
   );
 }
