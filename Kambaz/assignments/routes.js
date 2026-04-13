@@ -20,58 +20,61 @@ export default function AssignmentsRoutes(app, db) {
     next();
   };
 
-  const findAssignmentsForCourse = (req, res) => {
+  const findAssignmentsForCourse = async (req, res) => {
     const { courseId } = req.params;
-    res.json(dao.findAssignmentsForCourse(courseId));
+    const assignments = await dao.findAssignmentsForCourse(courseId);
+    res.json(assignments);
   };
 
-  const createAssignmentForCourse = (req, res) => {
+  const createAssignmentForCourse = async (req, res) => {
     const { courseId } = req.params;
-    const assignment = {
-      ...req.body,
-      course: courseId,
-    };
-    const created = dao.createAssignment(assignment);
-    res.json(created);
+    const assignment = { ...req.body };
+    const newAssignment = await dao.createAssignment(courseId, assignment);
+    res.json(newAssignment);
   };
 
-  const deleteAssignment = (req, res) => {
-    const { assignmentId } = req.params;
-    dao.deleteAssignment(assignmentId);
-    res.sendStatus(204);
+  const deleteAssignment = async (req, res) => {
+    const { courseId, assignmentId } = req.params;
+    const status = await dao.deleteAssignment(courseId, assignmentId);
+    res.json(status);
   };
 
-  const updateAssignment = (req, res) => {
-    const { assignmentId } = req.params;
-    const updated = dao.updateAssignment(assignmentId, req.body);
-    if (!updated) {
+  const updateAssignment = async (req, res) => {
+    const { courseId, assignmentId } = req.params;
+    const assignmentUpdates = req.body;
+    const status = await dao.updateAssignment(
+      courseId,
+      assignmentId,
+      assignmentUpdates
+    );
+    if (!status) {
       res.sendStatus(404);
       return;
     }
-    res.sendStatus(204);
+    res.json(status);
   };
 
   app.get(
     "/api/courses/:courseId/assignments",
     requireUser,
-    findAssignmentsForCourse,
+    findAssignmentsForCourse
   );
   app.post(
     "/api/courses/:courseId/assignments",
     requireUser,
     requireAssignmentEditorRole,
-    createAssignmentForCourse,
+    createAssignmentForCourse
   );
   app.delete(
-    "/api/assignments/:assignmentId",
+    "/api/courses/:courseId/assignments/:assignmentId",
     requireUser,
     requireAssignmentEditorRole,
-    deleteAssignment,
+    deleteAssignment
   );
   app.put(
-    "/api/assignments/:assignmentId",
+    "/api/courses/:courseId/assignments/:assignmentId",
     requireUser,
     requireAssignmentEditorRole,
-    updateAssignment,
+    updateAssignment
   );
 }

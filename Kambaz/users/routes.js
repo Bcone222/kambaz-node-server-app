@@ -103,38 +103,11 @@ export default function UserRoutes(app, db) {
       res.sendStatus(401);
       return;
     }
-    res.json(enrollmentsDao.findEnrollmentsForUser(currentUser._id));
-  };
-
-  const enrollCurrentUserInCourse = async (req, res) => {
-    const currentUser = req.session["currentUser"];
-    if (!currentUser) {
-      res.sendStatus(401);
-      return;
-    }
-    enrollmentsDao.enrollUserInCourse(currentUser._id, req.body.courseId);
-    res.sendStatus(200);
-  };
-
-  const unenrollCurrentUserFromCourse = async (req, res) => {
-    const currentUser = req.session["currentUser"];
-    if (!currentUser) {
-      res.sendStatus(401);
-      return;
-    }
-    enrollmentsDao.unenrollUserFromCourse(
-      currentUser._id,
-      req.params.courseId
-    );
-    res.sendStatus(200);
+    const list = await enrollmentsDao.findEnrollmentsForUser(currentUser._id);
+    res.json(list);
   };
 
   app.get("/api/users/current/enrollments", findMyEnrollments);
-  app.post("/api/users/current/enrollments", enrollCurrentUserInCourse);
-  app.delete(
-    "/api/users/current/enrollments/:courseId",
-    unenrollCurrentUserFromCourse
-  );
 
   app.post("/api/users", createUser);
   app.get("/api/users", findAllUsers);
