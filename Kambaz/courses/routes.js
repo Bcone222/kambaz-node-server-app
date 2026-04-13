@@ -77,6 +77,21 @@ export default function CourseRoutes(app, db) {
     res.json(status);
   };
 
+  /** Alias for mistaken client paths that use …/current/enrollments/:cid instead of …/current/courses/:cid */
+  const unenrollCurrentUserEnrollmentPath = async (req, res) => {
+    const currentUser = req.session["currentUser"];
+    if (!currentUser) {
+      res.sendStatus(401);
+      return;
+    }
+    const { cid } = req.params;
+    const status = await enrollmentsDao.unenrollUserFromCourse(
+      currentUser._id,
+      cid,
+    );
+    res.json(status);
+  };
+
   const findUsersForCourse = async (req, res) => {
     const { cid } = req.params;
     const users = await enrollmentsDao.findUsersForCourse(cid);
@@ -87,6 +102,10 @@ export default function CourseRoutes(app, db) {
 
   app.post("/api/users/:uid/courses/:cid", enrollUserInCourse);
   app.delete("/api/users/:uid/courses/:cid", unenrollUserFromCourse);
+  app.delete(
+    "/api/users/current/enrollments/:cid",
+    unenrollCurrentUserEnrollmentPath,
+  );
 
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
 
